@@ -1,0 +1,31 @@
+
+services:
+
+  preservation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Uncomment to keep container running
+    # command: ['tail', '-f', '/dev/null']
+    image: local/demo:latest
+    tty: true
+    stdin_open: true
+    secrets:
+      - AVIARY_API_KEY
+      - DB_USER
+      - DB_PASSWD
+    environment:
+      AVIARY_ORG_ID: ${AVIARY_ORG_ID}
+      AVIARY_BASE_URL: ${AVIARY_BASE_URL}
+      ORGANIZATION_NAME: ${ORGANIZATION_NAME}
+      NOID_URL: ${NOID_URL}
+      DB_HOST: ${DB_HOST}
+      DB: ${DB}
+
+secrets:
+  AVIARY_API_KEY:
+    file: ./secrets/aviary_api_key.txt
+  DB_USER:
+    file: ./secrets/db_user.txt
+  DB_PASSWD:
+    file: ./secrets/db_passwd.txt

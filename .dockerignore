@@ -1,0 +1,13 @@
+# Dockerfile
+
+# Exclude everything
+#   README.md
+#   .git
+#   docker-compose.yml
+secrets
+.*
+*
+
+# Include only the following
+!requirements.txt
+!src/
