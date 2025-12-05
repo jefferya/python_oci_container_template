@@ -1,0 +1,24 @@
+ame: Nox Tests
+
+on:
+  push
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # https://nox.thea.codes/en/stable/tutorial.html
+      - name: Set up Nox
+        uses: wntrblm/nox@2025.02.09
+        with:
+          python-versions: "3.12, 3.13"
+
+      - name: Run Nox
+        run: nox
