@@ -91,6 +91,6 @@ jobs:
             demo 
           files: |
             ./docker-bake.hcl
-            ${{ steps.meta.outputs.bake-file }}
+            cwd://${{ steps.meta.outputs.bake-file }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
