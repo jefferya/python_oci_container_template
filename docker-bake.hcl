@@ -33,6 +33,7 @@ group "default" {
 target "demo" {
   inherits = ["common", "docker-metadata-action"]
   dockerfile = "Dockerfile"
-  contexts = {
+   contexts = {
   }
+  context = "."
 }
