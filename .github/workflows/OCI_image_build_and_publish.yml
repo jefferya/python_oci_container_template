@@ -76,6 +76,18 @@ jobs:
             type=ref,enable=true,event=branch
             type=ref,enable=false,event=tag
             type=ref,enable=false,event=pr
+          labels: |
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
+            org.opencontainers.image.title=${{ github.repository }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.version=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+          annotations: |
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
+            org.opencontainers.image.title=${{ github.repository }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.version=${{ github.sha }}
+            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/bake-action
@@ -84,9 +96,9 @@ jobs:
         uses: docker/bake-action@v6 #v5.3.0
         with:
           push: ${{ github.event_name != 'pull_request' }}
-          load: true
-          #provenance: true
-          #sbom: true
+          #load: true
+          provenance: true
+          sbom: true
           targets: |
             demo 
           files: |
