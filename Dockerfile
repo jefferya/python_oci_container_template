@@ -39,7 +39,7 @@ COPY src/*.py .
 
 # Not working due to private repo
 #RUN pip install --upgrade pip \
-    #&& pip install -r requirements.txt
+    #&& pip install --no-cache-dir -r requirements.txt
 
 CMD ["python3", "python_demo.py", "--log-level", "DEBUG"]
 
