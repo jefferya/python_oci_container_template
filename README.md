@@ -1,4 +1,4 @@
-# Testing a template for a OCI container template
+# Testing a template for a OCI container image
 
 The purpose is a test sandbox and template for Python projects within an OCI container image.
 
