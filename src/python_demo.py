@@ -35,12 +35,14 @@ def main():
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
 
+    print("Print xtestx to stdout")
+
     logging.debug("Debugging details enabled")
     logging.info("Python version: %s", sys.version)
     logging.info("Current User: UID:[%s] GID:[%s]", os.getuid(), os.getgid())
     logging.warning("This is a warning example")
     logging.error("This is an error example")
-    logging.critical("Critical issue example")
+    logging.critical("Critical issue example (print stdout)")
 
 
 if __name__ == "__main__":
