@@ -42,7 +42,7 @@ def main():
     logging.info("Current User: UID:[%s] GID:[%s]", os.getuid(), os.getgid())
     logging.warning("This is a warning example")
     logging.error("This is an error example")
-    logging.critical("Critical issue example (print stdout)")
+    logging.critical("Critical issue example (print via logging module)")
 
 
 if __name__ == "__main__":
