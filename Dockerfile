@@ -35,6 +35,10 @@ ENV VIRTUAL_ENV=${APP_ROOT}/penv
 ENV PATH="${APP_ROOT}/penv/bin:$PATH"
 
 COPY src/requirements/requirements.txt .
+
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
 COPY src/*.py .
 
 # Not working due to private repo
