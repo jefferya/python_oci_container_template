@@ -4,7 +4,7 @@ import nox
 
 _python_app_dir = "src"
 _requirements_app = f"{_python_app_dir}/requirements/requirements.txt"
-_requirements_tests = f"{_python_app_dir}/requirements/requirements.pytests.txt"
+_requirements_tests = f"{_python_app_dir}/requirements/requirements-test.txt"
 
 
 @nox.session
