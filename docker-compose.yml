@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     # Uncomment to keep container running
-    # command: ['tail', '-f', '/dev/null']
+    command: ['tail', '-f', '/dev/null']
     image: local/demo:latest
     tty: true
     stdin_open: true
