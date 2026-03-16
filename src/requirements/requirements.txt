@@ -1,4 +1,4 @@
-requests==2.31
+requests==2.32.5
 
 # If public access is allowed, use the https URL
 #git+https://github.com/ualbertalib/avp_aviary_digital_preservation.git@46f7eeadd51e8ab7e4ca0b05ed701c6140a5b3f2
