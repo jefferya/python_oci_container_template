@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.actor == 'dependabot[bot]'   # Only run on Dependabot PRs
     steps:
       - name: Checkout code
