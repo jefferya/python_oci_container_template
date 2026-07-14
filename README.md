@@ -28,3 +28,9 @@ The purpose is a test sandbox and template for Python projects within an OCI con
   * OCI image build and publish to GitHub OCI image registry
   * GitHub OCI image registry cleanup of old images
   * Run Python Lint and code tests via Nox
+
+## Scripts
+
+Host some sample python scripts used for various purposes
+
+* [Pierre Ouvrard Archive Bindings Web Scraping](./src/2026-07-08_sarah_severson_pierre_ouvrard_archive.org.py)
