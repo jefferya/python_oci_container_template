@@ -19,7 +19,7 @@ jobs:
 
       # https://nox.thea.codes/en/stable/tutorial.html
       - name: Set up Nox
-        uses: wntrblm/nox@2026.04.10
+        uses: wntrblm/nox@2026.08.10
         with:
           python-versions: "3.12, 3.13"
 
