@@ -31,5 +31,6 @@ jobs:
           # https://github.com/dataaxiom/ghcr-cleanup-action?tab=readme-ov-file
           older-than: 6 months 
           keep-n-tagged: 5
+          exclude-tags: 'v*,latest' # Protects any tag starting with 'v' and 'latest'
           delete-untagged: true
           dry-run: false 
