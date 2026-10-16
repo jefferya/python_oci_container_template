@@ -20,17 +20,30 @@ permissions:
 
 jobs:
 
-  GHCR-io-cleanup-action:
-
+ GHCR-io-cleanup-action:
+ 
+    # https://github.com/marketplace/actions/ghcr-io-cleanup-action
+    # https://github.com/dataaxiom/ghcr-cleanup-action?tab=readme-ov-file
+ 
     runs-on: ubuntu-latest
     steps:
-      # https://github.com/marketplace/actions/ghcr-io-cleanup-action
-      - uses: dataaxiom/ghcr-cleanup-action@v1
+      - name: Clean up old feature/branch tags
+        uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # https://github.com/dataaxiom/ghcr-cleanup-action?tab=readme-ov-file
-          older-than: 3 months 
-          keep-n-tagged: 5
-          exclude-tags: 'v*,latest' # Protects any tag starting with 'v' and 'latest'
+          older-than: 7 days
+          # Exclude SemVer releases and 'latest' so Step 1 only touches branch/feature tags
+          exclude-tags: '^latest$|^v?\d+\.\d+\.\d+$|^v?\d+\.\d+$|^v?\d+$'
+          use-regex: true
           delete-untagged: true
-          dry-run: false 
+ 
+      - name: Retain only the x newest SemVer releases
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-tags: '^v?\d+\.\d+\.\d+$|^v?\d+\.\d+$|^v?\d+$'
+          use-regex: true
+          keep-n-tagged: 5
+          dry-run: false
+          exclude-tags: '^latest$'
+          delete-untagged: true
