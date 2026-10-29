@@ -8,8 +8,6 @@ on:
       - '!main' # exclude main
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-  # pull_request:
-  #   branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -34,14 +32,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # Install the cosign tool except on PR
-      # https://github.com/sigstore/cosign-installer
-      #- name: Install cosign
-      #  if: github.event_name != 'pull_request'
-      #  uses: sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06 #v3.1.1
-      #  with:
-      #    cosign-release: 'v2.1.1'
-
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -62,7 +52,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
+      # Extract metadata (tags, labels, annotations) for OCI image
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
@@ -79,6 +69,13 @@ jobs:
             type=ref,enable=true,event=branch
             type=ref,enable=false,event=tag
             type=ref,enable=false,event=pr
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+          annotations: |
+            # Source must be an annotation so it attaches to the multi-arch Index
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/bake-action
