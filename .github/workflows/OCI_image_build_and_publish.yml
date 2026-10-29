@@ -93,9 +93,9 @@ jobs:
             ./docker-bake.hcl
             cwd://${{ steps.meta.outputs.bake-file }}
             cwd://${{ steps.meta.outputs.bake-file-annotations }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
 
       ###########
       # If you want to use `docker build` instead of `docker buildx bake`
