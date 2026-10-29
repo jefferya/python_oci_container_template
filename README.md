@@ -6,9 +6,9 @@ The purpose is a test sandbox and template for Python projects within an OCI con
 
 * Dockerfile
   * Minimal: derived from Alpine
-  * Adds user therefor commands don't run as root
-  * Uses Python virtual environment to container requirements
-  * Docker Buildx should allow setting UID/GID at build time
+  * Uses Python virtual environment and requirements file to control package versions
+  * Adds user therefore commands don't run as root
+  * OCI image and docker-compose example of setting UID/GID at build time
 * Docker Compose file
   * Orchestrate container
   * Contains comments on how to override container "CMD" to allow exec of sh shell
