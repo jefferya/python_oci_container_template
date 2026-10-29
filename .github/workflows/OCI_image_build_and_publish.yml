@@ -76,6 +76,13 @@ jobs:
             type=ref,enable=true,event=branch
             type=ref,enable=false,event=tag
             type=ref,enable=false,event=pr
+          labels: |
+            # Links the package to your repo so GHCR syncs description & README
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          annotations: |
+            # Prefixing with 'index:' targets the multi-arch root index for GHCR
+            index:org.opencontainers.image.description=${{ github.event.repository.description }}
+            index:org.opencontainers.image.title=${{ github.repository }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/bake-action
