@@ -84,8 +84,8 @@ jobs:
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           annotations: |
             # Prefixing with 'index:' targets the multi-arch root index for GHCR
-            index:org.opencontainers.image.description=${{ github.event.repository.description }}
-            index:org.opencontainers.image.title=${{ github.repository }}
+            org.opencontainers.image.description=${{ github.event.repository.description }}
+            org.opencontainers.image.title=${{ github.repository }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/bake-action
@@ -101,6 +101,6 @@ jobs:
             demo 
           files: |
             ./docker-bake.hcl
-            cwd://${{ steps.meta.outputs.bake-file }}
+            ${{ steps.meta.outputs.bake-file }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
