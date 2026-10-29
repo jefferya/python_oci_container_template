@@ -37,8 +37,8 @@ target "demo" {
   contexts = {
   }
   platforms  = ["linux/amd64", "linux/arm64"]
-  labels = [
-    "org.opencontainers.image.description=Testing a template for a OCI container template.",
-    "org.opencontainers.image.title=jefferya/python_oci_container_template"
-  ]
+#  labels = {
+#    "org.opencontainers.image.description" = "Testing a template for a OCI container template.",
+#    "org.opencontainers.image.title" = "jefferya/python_oci_container_template"
+#  }
 }
