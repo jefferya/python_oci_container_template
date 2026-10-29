@@ -63,8 +63,6 @@ jobs:
       with:
         push: false
         load: true
-        provenance: true
-        sbom: true
         targets: |
           default
         files: |
