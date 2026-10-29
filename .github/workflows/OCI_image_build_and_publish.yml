@@ -88,6 +88,7 @@ jobs:
           provenance: true
           sbom: true
           targets: |
+            # docker-bake.hcl targets
             demo 
           files: |
             ./docker-bake.hcl
