@@ -5,11 +5,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Passes host environment variables to the Dockerfile ARGs.
+        # The ':-1000' provides a default fallback if the variable is empty.
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     # Uncomment to keep container running
     command: ['tail', '-f', '/dev/null']
     image: local/demo:latest
     tty: true
     stdin_open: true
+    # This forces the container to run as this specific UID:GID at runtime
+    user: "${UID:-1000}:${GID:-1000}"
     secrets:
       - AVIARY_API_KEY
       - DB_USER
