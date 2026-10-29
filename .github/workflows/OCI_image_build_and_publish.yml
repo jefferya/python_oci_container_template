@@ -8,8 +8,6 @@ on:
       - '!main' # exclude main
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-  # pull_request:
-  #   branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -34,20 +32,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      # Install the cosign tool except on PR
-      # https://github.com/sigstore/cosign-installer
-      #- name: Install cosign
-      #  if: github.event_name != 'pull_request'
-      #  uses: sigstore/cosign-installer@6e04d228eb30da1757ee4e1dd75a0ec73a653e06 #v3.1.1
-      #  with:
-      #    cosign-release: 'v2.1.1'
-
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
-      # Set up BuildKit Docker container builder to be able to build
-      # multi-platform images and export cache
+      # Set up OCI image builder
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
@@ -62,11 +51,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
+      # Extract metadata (tags, labels, annotations) for OCI image
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        env:
+          # Forces metadata-action to output annotations to the OCI Index root
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index,manifest
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -77,21 +69,16 @@ jobs:
             type=ref,enable=false,event=tag
             type=ref,enable=false,event=pr
           labels: |
-            org.opencontainers.image.source=${{ github.repositoryUrl }}
-            org.opencontainers.image.title=${{ github.repository }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.description=${{ github.event.repository.description }}
-            org.opencontainers.image.version=${{ github.sha }}
-            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
           annotations: |
-            org.opencontainers.image.source=${{ github.repositoryUrl }}
-            org.opencontainers.image.title=${{ github.repository }}
+            # Source must be an annotation so it attaches to the multi-arch Index
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.description=${{ github.event.repository.description }}
-            org.opencontainers.image.version=${{ github.sha }}
-            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/bake-action
-      - name: Build and push Docker image
+      - name: Build and push OCI image to registry
         id: build-and-push
         uses: docker/bake-action@v7 #v5.3.0
         with:
@@ -99,10 +86,40 @@ jobs:
           #load: true
           provenance: true
           sbom: true
+          # docker-bake.hcl targets
           targets: |
             demo 
           files: |
             ./docker-bake.hcl
             cwd://${{ steps.meta.outputs.bake-file }}
+            cwd://${{ steps.meta.outputs.bake-file-annotations }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
+
+
+      ###########
+      # If you want to use `docker build` instead of `docker buildx bake`
+      # Add replace this step with the "docker/build-push-action" version below 
+      #   * Build and push OCI image to registry
+      # and remove the above
+      #   * Set up OCI image builder 
+      # #########
+      #
+      #- name: Build and push OCI image to registry
+      #  id: build-and-push
+      #  uses: docker/build-push-action@v6
+      #  with:
+      #    context: .
+      #    file: ./Dockerfile
+      #    platforms: linux/amd64,linux/arm64
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #
+      #    # Pass metadata directly from the previous step's standard outputs
+      #    tags: ${{ steps.meta.outputs.tags }}
+      #    labels: ${{ steps.meta.outputs.labels }}
+      #    annotations: ${{ steps.meta.outputs.annotations }}
+      #
+      #    # Supply-chain attestations
+      #    provenance: true 
+      #    sbom: true 
+      #

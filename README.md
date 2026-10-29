@@ -26,6 +26,7 @@ The purpose is a test sandbox and template for Python projects within an OCI con
     * Update Dockerfile base OCI image
     * Update Python requirements.txt
   * OCI image build and publish to GitHub OCI image registry
+    * Buildx bake to add labels and annotations to the image + SBOM/provenance to enhance OCI image scanning such as Trivy.
   * GitHub OCI image registry cleanup of old images
   * Run Python Lint and code tests via Nox
 
