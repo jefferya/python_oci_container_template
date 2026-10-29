@@ -70,6 +70,8 @@ jobs:
         set: |
           *.tags=localbuild/testimage:latest
           *.platform=linux/amd64
+          *.cache-from=type=gha
+          *.cache-to=type=gha,mode=max
 
     # https://github.com/anchore/scan-action
     - name: Run the Anchore Grype scan action
