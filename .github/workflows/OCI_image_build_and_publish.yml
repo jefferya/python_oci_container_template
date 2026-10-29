@@ -36,8 +36,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
-      # Set up BuildKit Docker container builder to be able to build
-      # multi-platform images and export cache
+      # Set up OCI image builder
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
@@ -79,7 +78,7 @@ jobs:
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/bake-action
-      - name: Build and push Docker image
+      - name: Build and push OCI image to registry
         id: build-and-push
         uses: docker/bake-action@v7 #v5.3.0
         with:
@@ -96,3 +95,31 @@ jobs:
             cwd://${{ steps.meta.outputs.bake-file-annotations }}
           #cache-from: type=gha
           #cache-to: type=gha,mode=max
+
+
+      ###########
+      # If you want to use `docker build` instead of `docker buildx bake`
+      # Add replace this step with the "docker/build-push-action" version below 
+      #   * Build and push OCI image to registry
+      # and remove the above
+      #   * Set up OCI image builder 
+      # #########
+      #
+      #- name: Build and push OCI image to registry
+      #  id: build-and-push
+      #  uses: docker/build-push-action@v6
+      #  with:
+      #    context: .
+      #    file: ./Dockerfile
+      #    platforms: linux/amd64,linux/arm64
+      #    push: ${{ github.event_name != 'pull_request' }}
+      #
+      #    # Pass metadata directly from the previous step's standard outputs
+      #    tags: ${{ steps.meta.outputs.tags }}
+      #    labels: ${{ steps.meta.outputs.labels }}
+      #    annotations: ${{ steps.meta.outputs.annotations }}
+      #
+      #    # Supply-chain attestations
+      #    provenance: true 
+      #    sbom: true 
+      #
