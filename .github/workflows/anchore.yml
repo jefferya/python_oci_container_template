@@ -69,6 +69,7 @@ jobs:
           ./docker-bake.hcl
         set: |
           *.tags=localbuild/testimage:latest
+          *.platform=linux/amd64
 
     # https://github.com/anchore/scan-action
     - name: Run the Anchore Grype scan action
