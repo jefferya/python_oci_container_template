@@ -1,0 +1,88 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow checks out code, builds an image, performs a container image
+# vulnerability scan with Anchore's Grype tool, and integrates the results with GitHub Advanced Security
+# code scanning feature.  For more information on the Anchore scan action usage
+# and parameters, see https://github.com/anchore/scan-action. For more
+# information on Anchore's container image scanning tool Grype, see
+# https://github.com/anchore/grype
+name: Anchore Grype vulnerability scan
+
+on:
+  schedule:
+    - cron: '39 23 * * 1'
+  workflow_dispatch:
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+  contents: read
+
+jobs:
+
+  Anchore-Build-Scan:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      packages: read # read registries used by Dockerfile
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # https://github.com/actions/checkout
+    - name: Check out the code
+      uses: actions/checkout@v7
+
+    # https://github.com/docker/login-action
+    - name: Log into registry ${{ env.REGISTRY }}
+      # if: github.event_name != 'pull_request'
+      uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    # https://github.com/docker/setup-buildx-action
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    # Build and push Docker image with Buildx (don't push on PR)
+    # https://github.com/docker/bake-action
+    - name: Build Docker image
+      id: build-and-push
+      uses: docker/bake-action@v7 #v5.3.0
+      with:
+        push: false
+        load: true
+        targets: |
+          default
+        files: |
+          ./docker-bake.hcl
+        set: |
+          *.tags=localbuild/testimage:latest
+
+    # https://github.com/anchore/scan-action
+    - name: Run the Anchore Grype scan action
+      uses: anchore/scan-action@27805bf3b4e84b4a5c980df22ed233c00390a439 #v7.4.2
+      id: scan
+      with:
+        image: "localbuild/testimage:latest"
+        # fail-build: true
+        fail-build: false
+        severity-cutoff: critical
+
+    # https://github.com/github/codeql-action
+    - name: Upload vulnerability report
+      uses: github/codeql-action/upload-sarif@v4.39.1
+      if: always()
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif }}
