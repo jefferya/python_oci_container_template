@@ -1,4 +1,4 @@
-FROM alpine:3.24.3
+FROM alpine:3.24.4
 
 # Install Python 3 and pip
 RUN  apk upgrade --no-cache && \
